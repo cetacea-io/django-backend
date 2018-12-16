@@ -6,7 +6,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    picture = models.ImageField(upload_to='images', blank=True, null=True)
+    # picture = models.ImageField(upload_to='images', blank=True, null=True)
+    picture = models.URLField()
+    bio = models.TextField(null=True, blank=True)
     # phone = PhoneNumberField(blank=True)
     public_profile = models.BooleanField(default=True)
 

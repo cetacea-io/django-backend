@@ -1,0 +1,18 @@
+{
+    "dev": {
+        "aws_region": "us-east-2",
+        "django_settings": "cetacea.settings.production",
+        "profile_name": "default",
+        "project_name": "src",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-ipmj84b2o",
+        "vpc_config": {
+            "SubnetIds": [ "subnet-8332f9ce", "subnet-141fa56f", "subnet-80d8a4e9"],
+            "SecurityGroupIds": ["sg-0bfc119be796abb13"]
+        },
+        "environment_variables": {
+            "SECRET_KEY": "#+v^ilf_6wru1pt$mdo-u==sm#tz$n9_imk^s#a=@zs^30^yww",
+            "DJANGO_SETTINGS_MODULE": "cetacea.settings.production"
+        }
+    }
+}

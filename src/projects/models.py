@@ -30,6 +30,16 @@ from django.contrib.auth import get_user_model
 #     usuarios dentro del team # Usuarios que ya estan trabajando en ese puesto
 #     usuarios que hicieron request pero aun no son aceptados 
 
+class Position(models.Model):
+    title = models.CharField(max_length=20, blank=False, null=False)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    time = models.CharField(max_length=255, blank=False, null=False)
+    compensation = models.CharField(max_length=255, blank=False, null=False)
+    requirements = models.CharField(max_length=255, blank=False, null=False)
+    form = models.URLField()
+
+    def __str__(self):
+        return str(self.title)
 
 class Comment(models.Model):
     owner = models.ForeignKey(
@@ -51,7 +61,8 @@ class Comment(models.Model):
 class Project(models.Model):
     title           = models.CharField(max_length=60, blank=True, null=True)
     category        = models.CharField(max_length=60, blank=True, null=True)
-    cover_image     = models.ImageField(upload_to='images', blank=True, null=True)
+    # cover_image     = models.ImageField(upload_to='images', blank=True, null=True)
+    cover_image     = models.URLField()
     likes           = models.ManyToManyField(
                         get_user_model(),
                         related_name='projects_liked',
@@ -81,6 +92,12 @@ class Project(models.Model):
 
     comments        = models.ManyToManyField(
                         Comment,
+                        related_name='project',
+                        blank=True
+                    )
+
+    positions       = models.ManyToManyField(
+                        Position,
                         related_name='project',
                         blank=True
                     )

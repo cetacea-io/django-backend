@@ -2,12 +2,16 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from .models import Project, Comment
+from .models import Project, Comment, Position
 
 
 class ProjectType(DjangoObjectType):
     class Meta:
         model = Project
+
+class PositionType(DjangoObjectType):
+    class Meta:
+        model = Position
 
 class CommentType(DjangoObjectType):
     class Meta:
