@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from organizations.models import Organization
+
 # class Tag(models.Model):
 #     title = models.CharField(max_length=30)
 
@@ -59,6 +61,8 @@ class Comment(models.Model):
 
 # Create your models here.
 class Project(models.Model):
+    # published_by_user = models.ForeignKey(get_user_model(), related_name='projects', on_delete=models.CASCADE)
+    # published_by_organization = models.ForeignKey(Organization, related_name='projects', on_delete=models.CASCADE)
     title           = models.CharField(max_length=60, blank=True, null=True)
     category        = models.CharField(max_length=60, blank=True, null=True)
     # cover_image     = models.ImageField(upload_to='images', blank=True, null=True)

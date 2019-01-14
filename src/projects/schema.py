@@ -8,6 +8,7 @@ from .models import Project, Comment, Position
 class ProjectType(DjangoObjectType):
     class Meta:
         model = Project
+        exclude_fields = ('published_by_user', 'published_by_organization')
 
 class PositionType(DjangoObjectType):
     class Meta:
@@ -71,10 +72,10 @@ class CreateComment(graphene.Mutation):
         else:
             new_project = Project.objects.get(id=project)
             comment = Comment(
-                        owner = info.context.user,
-                        # project = new_project,
-                        content = content
-                    )
+                owner = info.context.user,
+                # project = new_project,
+                content = content
+            )
             comment.save()
             new_project.comments.add(comment)
 

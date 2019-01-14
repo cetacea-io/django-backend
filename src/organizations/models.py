@@ -26,9 +26,9 @@ from django.contrib.auth import get_user_model
 #         return self.user #TODO: get username of the user
 
 
-# class Organization(models.Model):
-#     title = models.CharField(max_length=100, blank=False)
-#     members = models.ManyToManyField(Member,)
+class Organization(models.Model):
+    title = models.CharField(max_length=100, blank=False)
+    # members = models.ManyToManyField(Member,)
 
-#     def __str__(self):
-#         return self.title
+    def __str__(self):
+        return self.title

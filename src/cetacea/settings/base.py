@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = [
 # Local applications
 LOCAL_APPS = [
     'users',
+    'organizations',
     'projects',
     'portfolios',
     'courses',
