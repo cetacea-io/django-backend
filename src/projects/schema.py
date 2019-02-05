@@ -10,19 +10,32 @@ class ProjectType(DjangoObjectType):
         model = Project
         exclude_fields = ('published_by_user', 'published_by_organization')
 
+    def resolve_cover_image(self, *_):
+        if self.cover_image:
+            return self.cover_image.url
+        else:
+            return ""
+
 class PositionType(DjangoObjectType):
     class Meta:
         model = Position
 
 class CommentType(DjangoObjectType):
+    name = graphene.String()
     class Meta:
         model = Comment
+
+# class AuthorType(ObjectType):
+#     name = graphene.String()
+#     picture = graphene.String()
 
 class Query(graphene.ObjectType):
     project = graphene.Field(ProjectType,
                             id=graphene.Int())
 
     projects = graphene.List(ProjectType)
+
+    # author = graphene.Field(AuthorType)
 
     def resolve_project(self, info, **kwargs):
         id = kwargs.get('id')
@@ -54,6 +67,24 @@ class CreateProject(graphene.Mutation):
             return CreateProject(
                 category = project.category,
                 quick_desc = project.quick_desc,
+            )
+
+class JoinProject(graphene.Mutation):
+    position = graphene.Int()
+    
+    class Arguments:
+        position = graphene.Int()
+
+    def mutate(self, info, position):
+        if not info.context.user.is_authenticated:
+            raise Exception("User is not authenticated")
+        else:
+            new_position = Position.objects.get(id=position)
+            actual_applicant = info.context.user
+            new_position.applicants.add(actual_applicant)
+
+            return JoinProject(
+                # position = new_position
             )
 
 class CreateComment(graphene.Mutation):
@@ -88,3 +119,4 @@ class CreateComment(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_comment = CreateComment.Field()
     create_project = CreateProject.Field()
+    join_project = JoinProject.Field()

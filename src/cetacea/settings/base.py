@@ -19,7 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-# SECRET_KEY = '#+v^ilf_6wru1pt$mdo-u==sm#tz$n9_imk^s#a=@zs^30^yww'
 
 # Django applications
 DJANGO_APPS = [
@@ -42,7 +41,9 @@ THIRD_PARTY_APPS = [
 
 # Local applications
 LOCAL_APPS = [
+    'accounts',
     'users',
+    'analytics',
     'organizations',
     'projects',
     'portfolios',
@@ -122,10 +123,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 AUTH_USER_MODEL = 'users.User'
-
-STATIC_URL = '/static/'
-
-MEDIA_URL = '/media/'
 
 GRAPHENE = {
     'SCHEMA': 'cetacea.schema.schema',

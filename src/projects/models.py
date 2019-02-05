@@ -38,10 +38,20 @@ class Position(models.Model):
     time = models.CharField(max_length=255, blank=False, null=False)
     compensation = models.CharField(max_length=255, blank=False, null=False)
     requirements = models.CharField(max_length=255, blank=False, null=False)
-    form = models.URLField()
+    applicants = models.ManyToManyField(
+        get_user_model(),
+        related_name="positions_interested",
+        blank=True
+    )
 
     def __str__(self):
         return str(self.title)
+
+# class Collaborator(models.Model):
+    
+
+#     def __str__(self):
+#         return str(self.title)
 
 class Comment(models.Model):
     owner = models.ForeignKey(
@@ -65,8 +75,7 @@ class Project(models.Model):
     # published_by_organization = models.ForeignKey(Organization, related_name='projects', on_delete=models.CASCADE)
     title           = models.CharField(max_length=60, blank=True, null=True)
     category        = models.CharField(max_length=60, blank=True, null=True)
-    # cover_image     = models.ImageField(upload_to='images', blank=True, null=True)
-    cover_image     = models.URLField()
+    cover_image     = models.ImageField(upload_to='images', null=True)
     likes           = models.ManyToManyField(
                         get_user_model(),
                         related_name='projects_liked',

@@ -5,10 +5,12 @@ import graphql_social_auth
 import users.schema
 import projects.schema
 import courses.schema
+import accounts.schema
 
 class Query(users.schema.Query,
             projects.schema.Query,
             courses.schema.Query,
+            accounts.schema.Query,
             graphene.ObjectType):
     pass
 

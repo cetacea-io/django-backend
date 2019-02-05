@@ -1,13 +1,29 @@
 import graphene
+import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from .models import Course
+from .models import Course, Location
 
+from organizations.schema import OrganizationType
+
+# class CourseFilter(django_filters.FilterSet):
+#     class Meta:
+#         model = Course
+#         fields = ['id', 'title', 'area']
+
+# class CourseNode(DjangoObjectType):
+#     class Meta:
+#         model = Course
+#         interfaces = (graphene.relay.Node, )
 
 class CourseType(DjangoObjectType):
     class Meta:
         model = Course
+
+class LocationType(DjangoObjectType):
+    class Meta:
+        model = Location
 
 class Query(graphene.ObjectType):
     course = graphene.Field(CourseType,
@@ -30,3 +46,8 @@ class Query(graphene.ObjectType):
             return Course.objects.filter(published=True, area=area)
         else:
             return Course.objects.filter(published=True)
+
+
+# class Query(graphene.ObjectType):
+#     course = graphene.relay.Node.Field(CourseNode)
+#     courses = DjangoFilterConnectionField(CourseNode, filterset_class=CourseFilter)
