@@ -4,6 +4,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Project, Comment, Position
 
+from accounts.schema import ProfileType
 
 class ProjectType(DjangoObjectType):
     class Meta:
@@ -103,7 +104,7 @@ class CreateComment(graphene.Mutation):
         else:
             new_project = Project.objects.get(id=project)
             comment = Comment(
-                owner = info.context.user,
+                author = info.context.user,
                 # project = new_project,
                 content = content
             )
@@ -111,7 +112,7 @@ class CreateComment(graphene.Mutation):
             new_project.comments.add(comment)
 
             return CreateComment(
-                # owner = info.context.user,
+                # author = info.context.user,
                 # project_id = project_id,
                 content = content
             )

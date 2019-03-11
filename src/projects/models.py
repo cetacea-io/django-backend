@@ -1,15 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from accounts.models import Profile
 from organizations.models import Organization
-
-# class Tag(models.Model):
-#     title = models.CharField(max_length=30)
-
-# class Category(models.Model):
-#     title = models.CharField()
-#     icon = models.
-
 
 # class Group(models.Model):
 #     name        = models.CharField(max_length=70)
@@ -33,16 +26,16 @@ from organizations.models import Organization
 #     usuarios que hicieron request pero aun no son aceptados 
 
 class Position(models.Model):
-    title = models.CharField(max_length=20, blank=False, null=False)
-    description = models.CharField(max_length=255, blank=False, null=False)
-    time = models.CharField(max_length=255, blank=False, null=False)
-    compensation = models.CharField(max_length=255, blank=False, null=False)
-    requirements = models.CharField(max_length=255, blank=False, null=False)
-    applicants = models.ManyToManyField(
-        get_user_model(),
-        related_name="positions_interested",
-        blank=True
-    )
+    title           = models.CharField(max_length=20, blank=False, null=False)
+    description     = models.CharField(max_length=255, blank=False, null=False)
+    time            = models.CharField(max_length=255, blank=False, null=False)
+    compensation    = models.CharField(max_length=255, blank=False, null=False)
+    requirements    = models.CharField(max_length=255, blank=False, null=False)
+    applicants      = models.ManyToManyField(
+                        get_user_model(),
+                        related_name="positions_interested",
+                        blank=True
+                    )
 
     def __str__(self):
         return str(self.title)
@@ -54,7 +47,7 @@ class Position(models.Model):
 #         return str(self.title)
 
 class Comment(models.Model):
-    owner = models.ForeignKey(
+    author = models.ForeignKey(
         get_user_model(),
         related_name='comments',
         blank=False,
@@ -73,6 +66,7 @@ class Comment(models.Model):
 class Project(models.Model):
     # published_by_user = models.ForeignKey(get_user_model(), related_name='projects', on_delete=models.CASCADE)
     # published_by_organization = models.ForeignKey(Organization, related_name='projects', on_delete=models.CASCADE)
+    author          = models.ForeignKey(Profile, related_name="projects_created", on_delete=models.SET_NULL, null=True)
     title           = models.CharField(max_length=60, blank=True, null=True)
     category        = models.CharField(max_length=60, blank=True, null=True)
     cover_image     = models.ImageField(upload_to='images', null=True)
@@ -117,12 +111,5 @@ class Project(models.Model):
 
     def __str__(self):
         return str(self.title)
-
-# class Feed(models.Model):
-#     creation_date
-#     title
-#     likes
-#     comments
-#     content
 
 

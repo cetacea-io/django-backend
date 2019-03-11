@@ -10,17 +10,21 @@ class Location(models.Model):
     def __str__(self):
         return self.text
 
+class Cost(models.Model):
+    pass
 
-class Course(models.Model):
+class CommonEvent(models.Model):
     title           = models.CharField(max_length=60, blank=True, null=True)
+    cover_image     = models.ImageField(upload_to='images', default='', blank=True, null=True)
     author          = models.ForeignKey('organizations.Organization', on_delete=models.SET_NULL, null=True, blank=True)
-    area            = models.CharField(max_length=60, blank=True, null=True)
-    category        = models.CharField(max_length=60, blank=True, null=True)
-    # cover_image     = models.ImageField(upload_to='images', blank=True, null=True)
-    cover_image     = models.URLField()
 
+    categories      = models.ManyToManyField('category.Category', related_name='%(app_label)s_%(class)s_related', blank=True)
+    tags            = models.ManyToManyField('category.Tag', related_name='%(app_label)s_%(class)s_related', blank=True)
+
+    # cost            = models.DecimalField(max_digits=6, decimal_places=2)
     quick_desc      = models.CharField(max_length=255, blank=True, null=True)
     overview        = models.TextField(blank=True, null=True)
+
     # Dates and stuff
     creation_date   = models.DateTimeField(blank=True, null=True) # when the project was created in cetacea
     due_date        = models.DateTimeField(blank=True, null=True) # When the project should be done
@@ -31,21 +35,19 @@ class Course(models.Model):
     #Wheter the project is published or still in creation process
     published       = models.BooleanField(default=False)
 
+    class Meta:
+        abstract = True
+
+
+class Course(CommonEvent):
+
     instructors     = models.ManyToManyField(
                         Profile,
                         related_name='courses_taught',
                         blank=True
                     )
 
-    # tags            = models.ManyToManyField(
-    #                     Tag,
-    #                     related_name='projects_related'
-    #                 )
-    # prefered_language
-
     # status # Undefined, soon to start, in development, suspended, finished, aborted
-
-    # feed # Feed of what has been done timeline
 
     def __str__(self):
         return str(self.title)

@@ -4,6 +4,7 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from accounts.schema import ProfileType
+from taxonomies.schema import CategoryType, TagType
 
 
 class UserType(DjangoObjectType):

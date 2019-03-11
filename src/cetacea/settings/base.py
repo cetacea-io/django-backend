@@ -4,6 +4,7 @@ Django settings for cetacea project.
 
 import os
 import environ #environment variables
+import django_heroku
 
 env = environ.Env(DEBUG = (bool, False),)
 
@@ -22,16 +23,19 @@ SECRET_KEY = env('SECRET_KEY')
 
 # Django applications
 DJANGO_APPS = [
+    'object_tools',  # Needed for django-category dependency
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites' # Needed for django-category dependency
 ]
 
 # Third party applications
 THIRD_PARTY_APPS = [
+    'category',             # Django categories
     'social_django',        # Social Auth
     'graphene_django',      # GraphQL
     'corsheaders',          # Necessary for corsheaders
@@ -42,12 +46,14 @@ THIRD_PARTY_APPS = [
 # Local applications
 LOCAL_APPS = [
     'accounts',
-    'users',
     'analytics',
-    'organizations',
-    'projects',
-    'portfolios',
     'courses',
+    'events',
+    'organizations',
+    'portfolios',
+    'projects',
+    'taxonomies',
+    'users',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -193,3 +199,9 @@ from .components.sendgrid import *
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', default='')
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', default='')
+
+
+SITE_ID = 1 # Needed for django-category dependency
+
+# Needed for run in heroku
+django_heroku.settings(locals())

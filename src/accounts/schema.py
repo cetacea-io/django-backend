@@ -3,6 +3,7 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Profile
+from taxonomies.schema import CategoryType, TagType
 
 
 class ProfileType(DjangoObjectType):

@@ -6,11 +6,13 @@ import users.schema
 import projects.schema
 import courses.schema
 import accounts.schema
+import recommender.schema
 
 class Query(users.schema.Query,
             projects.schema.Query,
             courses.schema.Query,
             accounts.schema.Query,
+            recommender.schema.Query,
             graphene.ObjectType):
     pass
 

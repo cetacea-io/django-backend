@@ -6,6 +6,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from .models import Course, Location
 
 from organizations.schema import OrganizationType
+from taxonomies.schema import CategoryType, TagType
 
 # class CourseFilter(django_filters.FilterSet):
 #     class Meta:
@@ -21,16 +22,23 @@ class CourseType(DjangoObjectType):
     class Meta:
         model = Course
 
+    def resolve_cover_image(self, *_):
+        if self.cover_image:
+            return self.cover_image.url
+        else:
+            return ""
+
 class LocationType(DjangoObjectType):
     class Meta:
         model = Location
+
 
 class Query(graphene.ObjectType):
     course = graphene.Field(CourseType,
                             id=graphene.Int())
 
     courses = graphene.List(CourseType,
-                            area=graphene.String())
+                            category=graphene.Int())
 
     def resolve_course(self, info, **kwargs):
         id = kwargs.get('id')
@@ -40,10 +48,10 @@ class Query(graphene.ObjectType):
 
 
     def resolve_courses(self, info, **kwargs):
-        area = kwargs.get('area')
+        category = kwargs.get('category')
 
-        if area is not None:
-            return Course.objects.filter(published=True, area=area)
+        if category is not None:
+            return Course.objects.filter(published=True, categories__id=category)
         else:
             return Course.objects.filter(published=True)
 
