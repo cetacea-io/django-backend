@@ -1,1 +1,1 @@
-web: gunicorn src.cetacea.wsgi
+web: gunicorn cetacea.wsgi
