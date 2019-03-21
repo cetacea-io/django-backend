@@ -41,6 +41,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',          # Necessary for corsheaders
     'phonenumber_field',    # Necessary for handling phone numbers
     'storages',             # Needed for uploading media files to Amazon S3
+    'debug_toolbar',        # Debug toolbar
 ]
 
 # Local applications
@@ -61,6 +62,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     #CORS
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
