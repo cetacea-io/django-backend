@@ -53,7 +53,7 @@ class Course(CommonEvent):
                         related_name='courses_taught',
                         blank=True
                     )
-    url             = models.URLField()
+    url             = models.URLField(null=True, blank=True)
 
     # status # Undefined, soon to start, in development, suspended, finished, aborted
 
