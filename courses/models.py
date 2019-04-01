@@ -10,6 +10,15 @@ class Location(models.Model):
     def __str__(self):
         return self.text
 
+class DateAndTime(models.Model):
+    text            = models.CharField(max_length=50, blank=True, null=True)
+    creation_date   = models.DateTimeField(blank=True, null=True) # when the project was created in cetacea
+    due_date        = models.DateTimeField(blank=True, null=True) # When the project should be done
+    start_date      = models.DateTimeField(blank=True, null=True) # If the project will start in a specific date
+
+    def __str__(self):
+        return self.text
+
 class Cost(models.Model):
     pass
 
@@ -26,9 +35,7 @@ class CommonEvent(models.Model):
     overview        = models.TextField(blank=True, null=True)
 
     # Dates and stuff
-    creation_date   = models.DateTimeField(blank=True, null=True) # when the project was created in cetacea
-    due_date        = models.DateTimeField(blank=True, null=True) # When the project should be done
-    start_date      = models.DateTimeField(blank=True, null=True) # If the project will start in a specific date
+    date_and_time   = models.ForeignKey(DateAndTime, on_delete=models.CASCADE, null=True, blank=True)
 
     location        = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -46,6 +53,7 @@ class Course(CommonEvent):
                         related_name='courses_taught',
                         blank=True
                     )
+    url             = models.URLField()
 
     # status # Undefined, soon to start, in development, suspended, finished, aborted
 

@@ -17,3 +17,5 @@ ALLOWED_HOSTS = ['*']
 #         'PORT': env('MYSQL_PORT'),
 #     }
 # }
+
+from .components.aws_storage import *
