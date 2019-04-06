@@ -26,6 +26,7 @@ django-object-tools==2.0.0
 django-pandas==0.6.0
 django-phonenumber-field==2.0.1
 django-storages==1.7.1
+django-summernote==0.8.11.4
 docutils==0.14
 durationpy==0.5
 factory-boy==2.11.1

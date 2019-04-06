@@ -3,7 +3,7 @@ import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from .models import Course, Location
+from .models import Course, Location, DateAndTime
 
 from organizations.schema import OrganizationType
 from taxonomies.schema import CategoryType, TagType
@@ -31,6 +31,10 @@ class CourseType(DjangoObjectType):
 class LocationType(DjangoObjectType):
     class Meta:
         model = Location
+
+class DateAndTimeType(DjangoObjectType):
+    class Meta:
+        model = DateAndTime
 
 
 class Query(graphene.ObjectType):

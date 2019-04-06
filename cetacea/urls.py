@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+# from django.conf.urls.static import static
 from django.conf import settings
 
 from django.views.decorators.csrf import csrf_exempt
@@ -25,7 +26,8 @@ import object_tools
 urlpatterns = [
     path('', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     path('admin/', admin.site.urls),
-    path('object_tools/', object_tools.tools.urls)
+    path('object_tools/', object_tools.tools.urls), # needed for django categories
+    # path('summernote/', include('django_summernote.urls')), # needed for django summernote
 ]
 
 if settings.DEBUG:
@@ -33,3 +35,5 @@ if settings.DEBUG:
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
+
+    # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

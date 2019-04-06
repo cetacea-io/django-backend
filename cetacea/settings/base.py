@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = [
     'phonenumber_field',    # Necessary for handling phone numbers
     'storages',             # Needed for uploading media files to Amazon S3
     'debug_toolbar',        # Debug toolbar
+    'django_summernote',    # Django Summernote for Markdown in Admin
 ]
 
 # Local applications
