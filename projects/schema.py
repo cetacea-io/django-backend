@@ -7,6 +7,11 @@ from .models import Project, Comment, Position
 from accounts.schema import ProfileType
 
 class ProjectType(DjangoObjectType):
+    total_likes = graphene.Int()
+    total_views = graphene.Int()
+    random_contributors = graphene.List(graphene.String)
+    total_contributors = graphene.Int()
+    
     class Meta:
         model = Project
         exclude_fields = ('published_by_user', 'published_by_organization')
@@ -17,9 +22,54 @@ class ProjectType(DjangoObjectType):
         else:
             return ""
 
+    def resolve_total_likes(self, *_):
+        return 55454512
+    
+    def resolve_total_views(self, *_):
+        return 1205423125
+    
+    def resolve_random_contributors(self, info, *_):
+        contributors_list = []
+        for position in self.positions.all():
+            for applicant in position.applicants.all():
+                contributors_list.append(applicant.profile.profile_picture.url)
+        return contributors_list
+        
+
+    def resolve_total_contributors(self, *_):
+        total_contributors = 0
+        for position in self.positions.all():
+            for applicant in position.applicants.all():
+                total_contributors += 1
+        return total_contributors
+
 class PositionType(DjangoObjectType):
+    already_applied = graphene.Boolean()
+    contributors    = graphene.List(ProfileType)
+    random_contributors = graphene.List(graphene.String)
+
     class Meta:
         model = Position
+
+    def resolve_already_applied(self, info, *_):
+        #If the user is authenticated and the user has already applied to the position
+        if (info.context.user.is_authenticated) and (info.context.user in self.applicants.all()):
+            return True
+        return False
+    
+    def resolve_contributors(self, info, *_):
+        contributors_list = []
+        for contributor in self.applicants.all():
+            contributors_list.append(contributor.profile)
+        return contributors_list
+    
+    def resolve_random_contributors(self, info, *_):
+        contributors_list = []
+        for contributor in self.applicants.all():
+            contributors_list.append(contributor.profile.profile_picture.url)
+        return contributors_list
+
+
 
 class CommentType(DjangoObjectType):
     name = graphene.String()
@@ -35,6 +85,8 @@ class Query(graphene.ObjectType):
                             id=graphene.Int())
 
     projects = graphene.List(ProjectType)
+
+    position = graphene
 
     # author = graphene.Field(AuthorType)
 
@@ -71,9 +123,10 @@ class CreateProject(graphene.Mutation):
             )
 
 class JoinProject(graphene.Mutation):
+    status = graphene.Boolean()
     position = graphene.Int()
-    
-    class Arguments:
+
+    class Arguments:    
         position = graphene.Int()
 
     def mutate(self, info, position):
@@ -83,9 +136,11 @@ class JoinProject(graphene.Mutation):
             new_position = Position.objects.get(id=position)
             actual_applicant = info.context.user
             new_position.applicants.add(actual_applicant)
+            print(actual_applicant)
+            status = True
 
             return JoinProject(
-                # position = new_position
+                status = status
             )
 
 class CreateComment(graphene.Mutation):

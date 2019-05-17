@@ -42,7 +42,7 @@ THIRD_PARTY_APPS = [
     'phonenumber_field',    # Necessary for handling phone numbers
     'storages',             # Needed for uploading media files to Amazon S3
     'debug_toolbar',        # Debug toolbar
-    'django_summernote',    # Django Summernote for Markdown in Admin
+    # 'django_summernote',    # Django Summernote for Markdown in Admin
 ]
 
 # Local applications
@@ -143,6 +143,7 @@ AUTHENTICATION_BACKENDS = [
     #Graphql JWT
     'graphql_jwt.backends.JSONWebTokenBackend',
     # Social Auth
+    'social_core.backends.email.EmailAuth',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
 ]
@@ -169,6 +170,12 @@ SOCIAL_AUTH_PIPELINE = [
     # Make up a username for this person, appends a random string at the end if
     # there's any collision.
     'social_core.pipeline.user.get_username',
+
+    #Other
+    'accounts.social_auth.get_email',
+
+    #Other
+    'accounts.social_auth.get_profile_picture',
 
     # Send a validation email to the user to verify its email address.
     # Disabled by default.
@@ -197,11 +204,20 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Sendgrid email configuration
 from .components.sendgrid import *
 
-# SOCIAL_AUTH_POSTGRES_JSONFIELD = True # This is for PostgreSQL and Social Auth
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True # This is for PostgreSQL and Social Auth
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', default='')
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', default='')
+
+SOCIAL_AUTH_FACEBOOK_KEY = env('FACEBOOK_APP_ID', default='')
+
+SOCIAL_AUTH_FACEBOOK_SECRET = env('FACEBOOK_APP_SECRET', default='')
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id,name,email', 
+}
 
 
 SITE_ID = 1 # Needed for django-category dependency

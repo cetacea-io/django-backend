@@ -13,33 +13,6 @@ from organizations.models import Organization
 #                     related_name='groups'
 #                 )
 
-# class Position(models.Model):
-#     se requiere la locacion # si se necesita estar presente para la posicion especifica.
-#     # Puede que un mercadologo trabaje desde china, pero el fotografo si este en mexico.
-#     lenguajes preferidos # si es necesario saber algun lenguaje o lenguajes en especifico
-#     title 
-#     description
-#     hours # Numero de horas requeridas o esfuerzo en general
-#     requisitos
-#     lugares abiertos # Numero de lugares que estan abiertos
-#     usuarios dentro del team # Usuarios que ya estan trabajando en ese puesto
-#     usuarios que hicieron request pero aun no son aceptados 
-
-class Position(models.Model):
-    title           = models.CharField(max_length=20, blank=False, null=False)
-    description     = models.CharField(max_length=255, blank=False, null=False)
-    time            = models.CharField(max_length=255, blank=False, null=False)
-    compensation    = models.CharField(max_length=255, blank=False, null=False)
-    requirements    = models.CharField(max_length=255, blank=False, null=False)
-    applicants      = models.ManyToManyField(
-                        get_user_model(),
-                        related_name="positions_interested",
-                        blank=True
-                    )
-
-    def __str__(self):
-        return str(self.title)
-
 # class Collaborator(models.Model):
     
 
@@ -103,9 +76,22 @@ class Project(models.Model):
                         blank=True
                     )
 
-    positions       = models.ManyToManyField(
-                        Position,
-                        related_name='project',
+    def __str__(self):
+        return str(self.title)
+
+
+class Position(models.Model):
+    # locacion, si es necesario estar presente en la locacion
+    # lenguaje preferido
+    project         = models.ForeignKey(Project, related_name='positions', on_delete=models.CASCADE)
+    title           = models.CharField(max_length=20, blank=False, null=False)
+    description     = models.CharField(max_length=255, blank=False, null=False)
+    time            = models.CharField(max_length=255, blank=False, null=False)
+    compensation    = models.CharField(max_length=255, blank=False, null=False)
+    requirements    = models.CharField(max_length=255, blank=False, null=False)
+    applicants      = models.ManyToManyField(
+                        get_user_model(),
+                        related_name="positions_interested",
                         blank=True
                     )
 
@@ -113,3 +99,7 @@ class Project(models.Model):
         return str(self.title)
 
 
+# class Position(models.Model):
+#     lugares abiertos # Numero de lugares que estan abiertos
+#     usuarios dentro del team # Usuarios que ya estan trabajando en ese puesto
+#     usuarios que hicieron request pero aun no son aceptados 

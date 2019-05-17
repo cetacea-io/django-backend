@@ -3,6 +3,12 @@ from django.contrib.auth import get_user_model
 import graphene
 from graphene_django import DjangoObjectType
 
+import urllib.parse
+import requests
+import environ
+
+env = environ.Env(DEBUG = (bool, False),)
+
 from accounts.schema import ProfileType
 from taxonomies.schema import CategoryType, TagType
 
@@ -30,8 +36,35 @@ class CreateUser(graphene.Mutation):
 
         return CreateUser(user=user)
 
+class GetAccessToken(graphene.Mutation):
+    access_token = graphene.String()
+
+    class Arguments:
+        provider = graphene.String(required=True)
+        code = graphene.String(required=True)
+        redirect_uri = graphene.String(required=True)
+    
+    def mutate(self, info, provider, code, redirect_uri):
+        FACEBOOK_ID = env('FACEBOOK_APP_ID', default='')
+        FACEBOOK_SECRET = env('FACEBOOK_APP_SECRET', default='')
+
+        params = {
+            'client_id': FACEBOOK_ID,
+            'client_secret': FACEBOOK_SECRET,
+            'redirect_uri': redirect_uri,
+            'code': code
+        }
+        url = 'https://graph.facebook.com/v3.3/oauth/access_token?' + urllib.parse.urlencode(params)
+
+        resp = requests.get(url)
+
+        print(resp.json()['access_token'])
+        return GetAccessToken(access_token = resp.json()['access_token'])
+        
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
+    get_access_token = GetAccessToken.Field()
 
 
 class Query(graphene.AbstractType):

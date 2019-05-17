@@ -16,7 +16,11 @@ class Query(users.schema.Query,
             graphene.ObjectType):
     pass
 
-class Mutation(users.schema.Mutation, projects.schema.Mutation, graphene.ObjectType):
+class Mutation(
+    accounts.schema.Mutation,
+    users.schema.Mutation,
+    projects.schema.Mutation,
+    graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     social_auth = graphql_social_auth.SocialAuthJWT.Field()

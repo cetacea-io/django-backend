@@ -34,8 +34,14 @@ class CommonEvent(models.Model):
     quick_desc      = models.CharField(max_length=255, blank=True, null=True)
     overview        = models.TextField(blank=True, null=True)
 
+    # likes           = models.ManyToManyField(
+    #                     get_user_model(),
+    #                     related_name="events_liked",
+    #                     blank=True
+    #                 )
+
     # Dates and stuff
-    date_and_time   = models.ForeignKey(DateAndTime, on_delete=models.CASCADE, null=True, blank=True)
+    date_and_time   = models.OneToOneField(DateAndTime, on_delete=models.CASCADE, null=True, blank=True)
 
     location        = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -46,13 +52,25 @@ class CommonEvent(models.Model):
         abstract = True
 
 
+class CourseClassification(models.Model):
+    # Curso, Taller, Diplomado
+    title = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+
 class Course(CommonEvent):
 
+    classification  = models.ForeignKey(CourseClassification, on_delete=models.CASCADE, null=False, blank=False)
+    
+    area            = models.CharField(max_length=60, blank=False, null=False)
+
     instructors     = models.ManyToManyField(
-                        Profile,
-                        related_name='courses_taught',
-                        blank=True
-                    )
+                            Profile,
+                            related_name='courses_taught',
+                            blank=True
+                        )
     url             = models.URLField(null=True, blank=True)
 
     # status # Undefined, soon to start, in development, suspended, finished, aborted

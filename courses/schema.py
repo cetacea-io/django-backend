@@ -3,10 +3,12 @@ import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from .models import Course, Location, DateAndTime
+from .models import Course, Location, DateAndTime, CourseClassification
 
 from organizations.schema import OrganizationType
 from taxonomies.schema import CategoryType, TagType
+
+from recommender.functionality import recommend_courses_by_course
 
 # class CourseFilter(django_filters.FilterSet):
 #     class Meta:
@@ -19,6 +21,10 @@ from taxonomies.schema import CategoryType, TagType
 #         interfaces = (graphene.relay.Node, )
 
 class CourseType(DjangoObjectType):
+    total_likes = graphene.Int()
+    total_views = graphene.Int()
+    recommended = graphene.List(lambda: CourseType, args={'total_recommended': graphene.Int()})
+
     class Meta:
         model = Course
 
@@ -27,6 +33,15 @@ class CourseType(DjangoObjectType):
             return self.cover_image.url
         else:
             return ""
+    
+    def resolve_total_likes(self, *_):
+        return 55454512
+    
+    def resolve_total_views(self, *_):
+        return 1205423125
+
+    def resolve_recommended(self, *_, total_recommended):
+        return recommend_courses_by_course(total_recommended)
 
 class LocationType(DjangoObjectType):
     class Meta:
@@ -35,6 +50,10 @@ class LocationType(DjangoObjectType):
 class DateAndTimeType(DjangoObjectType):
     class Meta:
         model = DateAndTime
+
+class CourseClassificationType(DjangoObjectType):
+    class Meta:
+        model = CourseClassification
 
 
 class Query(graphene.ObjectType):
