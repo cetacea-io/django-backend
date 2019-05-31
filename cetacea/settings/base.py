@@ -172,10 +172,8 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.user.get_username',
 
     #Other
-    'accounts.social_auth.get_email',
+    # 'accounts.social_auth.get_email',
 
-    #Other
-    'accounts.social_auth.get_profile_picture',
 
     # Send a validation email to the user to verify its email address.
     # Disabled by default.
@@ -197,6 +195,8 @@ SOCIAL_AUTH_PIPELINE = [
 
     # Update the user record with any changed info from the auth service.
     'social_core.pipeline.user.user_details',
+    #Other
+    'accounts.social_auth.get_profile_picture',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

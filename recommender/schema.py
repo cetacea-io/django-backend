@@ -9,6 +9,11 @@ from category.models import Category
 from courses.schema import CourseType
 from taxonomies.schema import CategoryType, TagType
 
+class Item(graphene.ObjectType):
+    title = graphene.String()
+    description = graphene.String()
+    content = graphene.List(CourseType)
+
 class Query(graphene.ObjectType):
     recommend_courses_by_course = graphene.List(CourseType,
                                             id=graphene.Int())
@@ -18,6 +23,9 @@ class Query(graphene.ObjectType):
 
     recommend_categories = graphene.List(CategoryType)
 
+    load_dashboard = graphene.List(CategoryType,
+                                    iteration=graphene.Int())
+
     def resolve_recommend_courses_by_course(self, info, **kwargs):
         id = kwargs.get('id')
 
@@ -26,6 +34,12 @@ class Query(graphene.ObjectType):
     
     def resolve_recommend_categories(self, info, **kwargs):
         return Category.objects.all()
+
+    def load_dashboard(self, info, **kwargs):
+        iteration = kwargs.get('iteration')
+
+        if iteration == 1:
+            return Course.objects.filter(published=True)[:10]
 
 
 #     def resolve_courses(self, info, **kwargs):
