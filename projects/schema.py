@@ -6,14 +6,44 @@ from .models import Project, Comment, Position
 
 from accounts.schema import ProfileType
 
-class ProjectType(DjangoObjectType):
+class AuthorType(graphene.ObjectType):
+    id = graphene.ID(required=True)
+    title = graphene.String(required=True)
+    picture = graphene.String(required=True)
+
+    def resolve_id(self, info, *_):
+        return self.id
+
+    def resolve_title(self, info, *_):
+        if self.__class__.__name__ == 'User':
+            return '{} {}'.format(self.first_name, self.last_name)
+        elif self.__class__.__name__ == 'Organization':
+            return self.title
+
+    def resolve_picture(self, info, *_):
+        if self.__class__.__name__ == 'User':
+            return self.profile.profile_picture.url
+        elif self.__class__.__name__ == 'Organization':
+            return self.profile_picture.url
+
+class Common(graphene.Interface):
+    author = graphene.Field(AuthorType)
     total_likes = graphene.Int()
     total_views = graphene.Int()
+
+    def resolve_total_likes(self, *_):
+        return 55454512
+
+    def resolve_total_views(self, *_):
+        return 1205423125
+
+class ProjectType(DjangoObjectType):
     random_contributors = graphene.List(graphene.String)
     total_contributors = graphene.Int()
     
     class Meta:
         model = Project
+        interfaces = (Common, )
         exclude_fields = ('published_by_user', 'published_by_organization')
 
     def resolve_cover_image(self, *_):
@@ -21,12 +51,6 @@ class ProjectType(DjangoObjectType):
             return self.cover_image.url
         else:
             return ""
-
-    def resolve_total_likes(self, *_):
-        return 55454512
-    
-    def resolve_total_views(self, *_):
-        return 1205423125
     
     def resolve_random_contributors(self, info, *_):
         contributors_list = []

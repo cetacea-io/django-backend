@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
 from accounts.models import Profile
 from organizations.models import Organization
 
@@ -34,12 +37,25 @@ class Comment(models.Model):
     )
     published = models.DateTimeField(auto_now_add=True, auto_now=False)
 
+class Authorable(models.Model):
+    limit = models.Q(app_label = 'users', model = 'user') | models.Q(app_label = 'organizations', model = 'organization')
+    author_content_type = models.ForeignKey(ContentType, limit_choices_to=limit, on_delete=models.CASCADE)
+    author_object_id = models.PositiveIntegerField()
+    author = GenericForeignKey('author_content_type', 'author_object_id')
+
+    class Meta:
+        abstract = True
+
+class Timestampable(models.Model):
+    creation_date   = models.DateTimeField(blank=True, null=True) # when the project was created in cetacea
+
+    class Meta:
+        abstract = True
 
 # Create your models here.
-class Project(models.Model):
-    # published_by_user = models.ForeignKey(get_user_model(), related_name='projects', on_delete=models.CASCADE)
-    # published_by_organization = models.ForeignKey(Organization, related_name='projects', on_delete=models.CASCADE)
-    author          = models.ForeignKey(Profile, related_name="projects_created", on_delete=models.SET_NULL, null=True)
+class Project(
+                Authorable,
+                Timestampable):
     title           = models.CharField(max_length=60, blank=True, null=True)
     category        = models.CharField(max_length=60, blank=True, null=True)
     cover_image     = models.ImageField(upload_to='images', null=True)
@@ -51,7 +67,6 @@ class Project(models.Model):
     quick_desc      = models.CharField(max_length=255, blank=True, null=True)
     overview        = models.TextField(blank=True, null=True)
     # Dates and stuff
-    creation_date   = models.DateTimeField(blank=True, null=True) # when the project was created in cetacea
     due_date        = models.DateTimeField(blank=True, null=True) # When the project should be done
     start_date      = models.DateTimeField(blank=True, null=True) # If the project will start in a specific date
 
