@@ -16,6 +16,7 @@ class Member(models.Model):
 
 class Organization(models.Model):
     title = models.CharField(max_length=100, blank=False)
+    username = models.CharField(max_length=30, blank=True)
     profile_picture = models.ImageField(upload_to='images', null=True)
     members = models.ManyToManyField(Member, blank=True)
 

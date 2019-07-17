@@ -5,9 +5,7 @@ from graphene_django import DjangoObjectType
 
 import urllib.parse
 import requests
-import environ
-
-env = environ.Env(DEBUG = (bool, False),)
+from cetacea.settings.base import env
 
 from accounts.schema import ProfileType
 from taxonomies.schema import CategoryType, TagType

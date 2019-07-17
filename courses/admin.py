@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, contenttypes
 
 from .models import Course, Location, DateAndTime, CourseClassification, CoverItem
 
@@ -20,4 +20,5 @@ class CoverItemAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['title', 'categories__title']
+    filter_vertical = ['categories', 'tags']

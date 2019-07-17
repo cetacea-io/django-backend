@@ -1,54 +1,191 @@
 import graphene
+from graphene import relay
 import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from courses.models import Course
 from category.models import Category
+from projects.models import Project
 
 from courses.schema import CourseType
+from projects.schema import ProjectType
 from taxonomies.schema import CategoryType, TagType
 
-class Item(graphene.ObjectType):
+# class Item(relay.Node):
+#     class Meta:
+#         name = 'Item'
+    
+#     @staticmethod
+#     def to_global_id(type, id):
+#         return '{}:{}'.format(type, id)
+    
+#     @staticmethod
+#     def get_node_from_global_id(info, global_id, only_type=None):
+#         type, id = global_id.split(':')
+
+#         if only_type:
+#             assert type == only_type._meta.name, 'Received not compatible node.'
+        
+#         if type == 'CourseType':
+#             print('course')
+#             return CourseType
+#         elif type == 'ProjectType':
+#             print('project')
+#             return ProjectType
+
+# class ItemConnection(relay.Connection):
+#     class Meta:
+#         node = Item
+
+# class CourseNode(CourseType):
+#     class Meta:
+#         model = Course
+#         interfaces = (relay.Node, )
+
+# class ProjectNode(ProjectType):
+#     class Meta:
+#         model = Project
+#         interfaces = (relay.Node, )
+
+class ItemUnion(graphene.types.Union):
+    class Meta:
+        types = [CourseType, ProjectType]
+
+    @classmethod
+    def resolve_type(info, instance, context):
+        print(instance)
+        # if is_file_asset_node(instance):
+        #     return CourseNode
+        # elif is_question_asset_node(instance):
+        #     return ProjectNode
+        # raise Exception()
+
+class ItemConnection(relay.Connection):
+    class Meta:
+        node = ItemUnion
+
+class Carrousel(graphene.ObjectType):
+    class Meta:
+        interfaces = (relay.Node,)
+
     title = graphene.String()
     description = graphene.String()
-    content = graphene.List(CourseType)
+    content = graphene.List(ItemUnion)
+    # content = relay.ConnectionField(ItemConnection)
+
+    # def resolve_content(self, info, **kwargs):
+    #     return (Course.objects.all()[:2], Project.objects.all()[:2])
+
+class CarrouselConnection(relay.Connection):
+    class Meta:
+        node = Carrousel
+
 
 class Query(graphene.ObjectType):
-    recommend_courses_by_course = graphene.List(CourseType,
-                                            id=graphene.Int())
-
-    courses = graphene.List(CourseType,
-                            category=graphene.Int())
-
-    recommend_categories = graphene.List(CategoryType)
-
-    load_dashboard = graphene.List(CategoryType,
-                                    iteration=graphene.Int())
-
-    def resolve_recommend_courses_by_course(self, info, **kwargs):
-        id = kwargs.get('id')
-
-        if id is not None:
-            return Course.objects.filter(published=True)[:10]
-    
-    def resolve_recommend_categories(self, info, **kwargs):
-        return Category.objects.all()
-
-    def load_dashboard(self, info, **kwargs):
-        iteration = kwargs.get('iteration')
-
-        if iteration == 1:
-            return Course.objects.filter(published=True)[:10]
+    items = relay.ConnectionField(CarrouselConnection)
 
 
-#     def resolve_courses(self, info, **kwargs):
-#         category = kwargs.get('category')
+    def resolve_items(self, info, **kwargs):
+        # iteration = kwargs.get('iteration')
 
-#         if category is not None:
-#             return Course.objects.filter(published=True, category=category)
-#         else:
-#             return Course.objects.filter(published=True)
+        # if iteration == 1:
+
+        all = []
+
+        if info.context.user.is_authenticated:
+            item1 = Carrousel (
+                title       = 'Proyectos para ti',
+                description = 'Proyectos en los que te buscan',
+                content     = Project.objects.filter(published=True)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item1)
+
+            item2 = Carrousel (
+                title       = 'Cursos de {}'.format(Category.objects.get(id=1).title),
+                description = 'Las obras de teatro mas trending del momento',
+                content     = Course.objects.filter(categories__id=1)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item2)
+
+            item3 = Carrousel (
+                title       = 'Cursos y Talleres de teatro',
+                description = 'Los cursos y talleres por comenzar',
+                content     = Course.objects.filter(categories__id=5)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item3)
+
+            item3 = Carrousel (
+                title       = 'Cursos y Talleres de {}'.format(Category.objects.get(id=3).title),
+                description = 'Los cursos y talleres por comenzar',
+                content     = Course.objects.filter(categories__id=1)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item3)
+
+            item4 = Carrousel (
+                title       = 'Proximos eventos de Teatro',
+                description = 'Eventos de Teatro por comenzar',
+                content     = Course.objects.filter(categories__id=2)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item4)
+
+        else:
+            item1 = Carrousel (
+                title       = 'Proyectos destacados',
+                description = 'Proyectos en los que puedes colaborar',
+                content     = Project.objects.filter(published=True)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item1)
+
+            item2 = Carrousel (
+                title       = 'Talleres de {}'.format(Category.objects.get(id=1).title),
+                description = 'Las obras de teatro mas trending del momento',
+                content     = Course.objects.filter(categories__id=1)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item2)
+
+            item3 = Carrousel (
+                title       = 'Cursos y Talleres de teatro',
+                description = 'Los cursos y talleres por comenzar',
+                content     = Course.objects.filter(categories__id=2)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item3)
+
+            item3 = Carrousel (
+                title       = 'Cursos y Talleres de {}'.format(Category.objects.get(id=3).title),
+                description = 'Los cursos y talleres por comenzar',
+                content     = Course.objects.filter(categories__id=3)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item3)
+
+            item4 = Carrousel (
+                title       = 'Proximos eventos de Teatro',
+                description = 'Eventos de Teatro por comenzar',
+                content     = Course.objects.filter(categories__id=6)[:10]
+                # content     = Course.objects.filter(published=True)[:10]
+            )
+
+            all.append(item4)
+
+        return all
 
 
 # class Recommender():

@@ -3,10 +3,12 @@ import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from .models import Course, Location, DateAndTime, CourseClassification, CoverItem
+from .models import Course, CourseClassification, CoverItem
+from events.models import Location, DateAndTime
 
 from organizations.schema import OrganizationType
 from taxonomies.schema import CategoryType, TagType
+from projects.schema import Common
 
 from recommender.functionality import recommend_courses_by_course
 
@@ -19,6 +21,18 @@ from recommender.functionality import recommend_courses_by_course
 #     class Meta:
 #         model = Course
 #         interfaces = (graphene.relay.Node, )
+class LocationType(DjangoObjectType):
+    class Meta:
+        model = Location
+
+class DateAndTimeType(DjangoObjectType):
+    class Meta:
+        model = DateAndTime
+
+class CourseClassificationType(DjangoObjectType):
+    class Meta:
+        model = CourseClassification
+
 
 class CoverItemType(graphene.ObjectType):
     id = graphene.Int()
@@ -51,39 +65,30 @@ class CoverItemType(graphene.ObjectType):
 
 
 class CourseType(DjangoObjectType):
-    total_likes = graphene.Int()
-    total_views = graphene.Int()
     recommended = graphene.List(lambda: CourseType, args={'total_recommended': graphene.Int()})
+    gallery     = graphene.List(graphene.String)
 
     class Meta:
         model = Course
+        interfaces = (Common, )
 
     def resolve_cover_image(self, *_):
         if self.cover_image:
             return self.cover_image.url
         else:
             return ""
-    
-    def resolve_total_likes(self, *_):
-        return 55454512
-    
-    def resolve_total_views(self, *_):
-        return 1205423125
 
     def resolve_recommended(self, *_, total_recommended):
         return recommend_courses_by_course(total_recommended)
 
-class LocationType(DjangoObjectType):
-    class Meta:
-        model = Location
-
-class DateAndTimeType(DjangoObjectType):
-    class Meta:
-        model = DateAndTime
-
-class CourseClassificationType(DjangoObjectType):
-    class Meta:
-        model = CourseClassification
+    def resolve_gallery(self, *_):
+        from events.models import Picture
+        pics = Picture.objects.all()[:5]
+        # pics = self.pictures.all()[:5]
+        new = []
+        for pic in pics:
+            new.append(pic.content.url)
+        return new
 
 
 class Query(graphene.ObjectType):
