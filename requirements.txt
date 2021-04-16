@@ -16,7 +16,7 @@ Django==2.1
 django-categories==1.6
 django-category==2.0.1
 django-cors-headers==2.4.0
-django-debug-toolbar==1.11
+django-debug-toolbar==1.11.1
 django-environ==0.4.5
 django-filter==2.0.0
 django-graphql-jwt==0.1.10
