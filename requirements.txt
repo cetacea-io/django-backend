@@ -51,7 +51,7 @@ numpy==1.16.2
 oauthlib==2.1.0
 pandas==0.24.1
 phonenumbers==8.9.13
-Pillow==6.0.0
+Pillow==9.0.0
 placebo==0.8.2
 promise==2.1
 psycopg2==2.7.7
